@@ -6,7 +6,7 @@
 #    By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/19 11:52:48 by rfleritt          #+#    #+#              #
-#    Updated: 2025/07/19 12:46:33 by rfleritt         ###   ########.fr        #
+#    Updated: 2025/08/11 11:47:18 by rfleritt         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CC = cc
 CFLAGS = -Wall -Werror -Wextra -g3
 RM = rm -f
 
-SRC = ./src/main.c ./src/utils.c ./src/parse.c
+SRC = ./src/main.c ./src/utils.c ./src/parse.c ./src/init.c
 OBJ = $(SRC:.c=.o)
 
 all: ${NAME}

@@ -6,7 +6,7 @@
 /*   By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 11:56:51 by rfleritt          #+#    #+#             */
-/*   Updated: 2025/07/19 14:31:14 by rfleritt         ###   ########.fr       */
+/*   Updated: 2025/08/11 14:23:23 by rfleritt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,27 @@
 
 # define PHILO_MAX 200
 
+# define SEC_TO_USEC 1000000
+# define SEC_TO_MSEC 1000
+# define MSEC_TO_USEC 1000
+
+# define TAKE_FORKS "has taken a fork"
+# define EAT "is eating"
+# define THINK "is thinking"
+# define SLEEP "is sleeping"
+# define DIED "died"
+
+typedef struct s_philo
+{
+	struct s_data	*data;	
+	int				id;
+	int 			n_eaten;
+	long long		last_time;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*right_fork;
+	pthread_t		thread;
+}	t_philo;
+
 typedef struct s_data
 {
     unsigned int	n_philo;
@@ -37,23 +58,25 @@ typedef struct s_data
 	pthread_mutex_t	finish_mutex;
 	pthread_mutex_t *forks;
 	pthread_mutex_t print_mutex;
+	pthread_t		admin;
+	t_philo			*philo;
 }	t_data;
-
-typedef struct s_philo
-{
-	int				id;
-	int 			n_eaten;
-	long long		last_time;
-	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*right_fork;
-	t_data			*data;
-	pthread_t		thread;
-}	t_philo;
 
 int	ft_error(char *str);
 int	ft_strlen(char *str);
 int	input_valid(int argc, char **argv, t_data *data);
-int ft_atoil(char *str);
-int init_philo(t_philo *philo);
+int init_philo(t_data *data);
+int init_data(t_data *data);
+unsigned int ft_atoil(char *str);
+unsigned long	get_current_time_ms(void);
+void	*philo_routine(void *arg);
+void	*admin_routine(void *arg);
+void	wait_finish(t_data *data);
+void	ft_finish(t_data *data);
+void    philo_forks(t_philo *philo);
+void    philo_eat(t_philo *philo);
+void    philo_think(t_philo *philo);
+void    philo_sleep(t_philo *philo);
+void	print_msg(char *str, t_data *data);
 
 #endif
