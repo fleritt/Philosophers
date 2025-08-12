@@ -6,7 +6,7 @@
 /*   By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:03:33 by rfleritt          #+#    #+#             */
-/*   Updated: 2025/08/11 11:58:45 by rfleritt         ###   ########.fr       */
+/*   Updated: 2025/08/12 09:37:28 by rfleritt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,5 @@ int input_valid(int argc, char **argv, t_data *data)
 	if (data->n_philo <= 0 || data->n_times_eat == 0 || data->time_to_die <= 0 ||
 			data->time_to_eat <= 0 || data->time_to_sleep <= 0)
 		return (FALSE);
-	if (init_philo(data))
-		return (ft_error("ERROR: Failed Inicialization"));
     return(TRUE);
 }

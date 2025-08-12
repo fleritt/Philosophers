@@ -6,18 +6,11 @@
 /*   By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:03:22 by rfleritt          #+#    #+#             */
-/*   Updated: 2025/08/11 13:14:49 by rfleritt         ###   ########.fr       */
+/*   Updated: 2025/08/12 11:44:56 by rfleritt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
-
-void	print_msg(char *msg, t_data *data)
-{
-	pthread_mutex_lock(&data->print_mutex);
-	printf("%s", msg);
-	pthread_mutex_unlock(&data->print_mutex);
-}
 
 unsigned long	get_current_time_ms(void)
 {

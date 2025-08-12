@@ -6,7 +6,7 @@
 /*   By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:02:15 by rfleritt          #+#    #+#             */
-/*   Updated: 2025/08/11 13:25:30 by rfleritt         ###   ########.fr       */
+/*   Updated: 2025/08/12 13:50:40 by rfleritt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ void	wait_finish(t_data *data)
 	int i;
 	
 	i = 0;
-	if(data->admin)
-		pthread_join(data->admin, NULL);
+	if(data->monitor)
+		pthread_join(data->monitor, NULL);
 	if(data->philo)
 	{
 		while(i < (int)data->n_philo)
@@ -45,14 +45,36 @@ void	ft_finish(t_data *data)
 		free(data->forks);
 	if (data->philo)
 		free(data->philo);
-	free(data);
 }
 
-void	*admin_routine(void *arg)
+void	*monitor_routine(void *arg)
 {
 	t_data *data;
+	int		i;
 
 	data = (t_data *)arg;
+	while (1)
+	{
+		i = 0;
+		while(i < (int)data->n_philo)
+		{
+			pthread_mutex_lock(&data->finish_mutex);
+    		if(data->finish == 0)
+    		{
+    		    pthread_mutex_unlock(&data->finish_mutex);
+    		    return (NULL);
+    		}
+    		pthread_mutex_unlock(&data->finish_mutex);
+			if(get_current_time_ms() - data->philo[i].last_time > data->time_to_die)
+    		{
+				pthread_mutex_lock(&data->finish_mutex);
+    		    data->finish = 0;
+    		    pthread_mutex_unlock(&data->finish_mutex);
+				print_msg(DIED, &data->philo[i], data);
+				return(NULL);
+    		}
+		}
+	}
 	return(NULL);
 }
 
@@ -61,31 +83,42 @@ void	*philo_routine(void *arg)
 	t_philo	*philo;
 	
 	philo = (t_philo *)arg;
-	philo_forks(philo);
-	philo_eat(philo);
-	philo_think(philo);
-	philo_sleep(philo);
+	while (1)
+	{
+		pthread_mutex_lock(&philo->data->finish_mutex);
+    	if(philo->data->finish == 0)
+    	{
+    	    pthread_mutex_unlock(&philo->data->finish_mutex);
+    	    return (NULL);
+    	}
+		pthread_mutex_unlock(&philo->data->finish_mutex);
+		philo_forks(philo);
+		philo_eat(philo);
+		philo_sleep(philo);
+		philo_think(philo);
+	}
 	return(NULL);
 }
 
 int main(int argc, char **argv)
 {
-	t_data *data;
+	t_data data;
     int		i;
 	
 	i = 0;
-	data = malloc(sizeof(t_data));
     if (argc < 5 || argc > 6)
-        return (ft_error("ERROR: "));
-    if (input_valid(argc, argv, data))
-        return (ft_error("ERROR: Invalid Input"));
-    while(i < (int)data->n_philo)
 	{
-		pthread_create(&data->philo[i].thread, NULL, philo_routine, &data->philo[i]);
+        return (ft_error("ERROR: "));
+	}
+	if (init_data(argc, argv, &data))
+		return (ft_error("ERROR: Failed Inicialization"));
+    while(i < (int)data.n_philo)
+	{
+		pthread_create(&data.philo[i].thread, NULL, philo_routine, &data.philo[i]);
 		i++;
 	}
-	pthread_create(&data->admin, NULL, admin_routine, &data);
-	wait_finish(data);
-	ft_finish(data);
+	pthread_create(&data.monitor, NULL, monitor_routine, &data);
+	wait_finish(&data);
+	ft_finish(&data);
     return (0);
 }

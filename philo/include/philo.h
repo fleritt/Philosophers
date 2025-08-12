@@ -6,7 +6,7 @@
 /*   By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 11:56:51 by rfleritt          #+#    #+#             */
-/*   Updated: 2025/08/11 14:23:23 by rfleritt         ###   ########.fr       */
+/*   Updated: 2025/08/12 13:37:12 by rfleritt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,12 @@ typedef struct s_data
 	unsigned int	time_to_sleep;
 	int				n_times_eat;
 	int 			finish;
+	long long		start;
+	long long		now_time;
 	pthread_mutex_t	finish_mutex;
 	pthread_mutex_t *forks;
 	pthread_mutex_t print_mutex;
-	pthread_t		admin;
+	pthread_t		monitor;
 	t_philo			*philo;
 }	t_data;
 
@@ -66,7 +68,7 @@ int	ft_error(char *str);
 int	ft_strlen(char *str);
 int	input_valid(int argc, char **argv, t_data *data);
 int init_philo(t_data *data);
-int init_data(t_data *data);
+int init_data(int argc, char **argv, t_data *data);
 unsigned int ft_atoil(char *str);
 unsigned long	get_current_time_ms(void);
 void	*philo_routine(void *arg);
@@ -77,6 +79,6 @@ void    philo_forks(t_philo *philo);
 void    philo_eat(t_philo *philo);
 void    philo_think(t_philo *philo);
 void    philo_sleep(t_philo *philo);
-void	print_msg(char *str, t_data *data);
+void	print_msg(char *msg, t_philo *philo, t_data *data);
 
 #endif
