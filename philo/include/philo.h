@@ -6,7 +6,7 @@
 /*   By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 11:56:51 by rfleritt          #+#    #+#             */
-/*   Updated: 2025/08/12 13:37:12 by rfleritt         ###   ########.fr       */
+/*   Updated: 2025/08/14 13:49:17 by rfleritt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,13 @@
 # define THINK "is thinking"
 # define SLEEP "is sleeping"
 # define DIED "died"
+# define ALL_EATS "all eat enough"
 
 typedef struct s_philo
 {
 	struct s_data	*data;	
 	int				id;
-	int 			n_eaten;
+	int				n_eaten;
 	long long		last_time;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
@@ -49,36 +50,39 @@ typedef struct s_philo
 
 typedef struct s_data
 {
-    unsigned int	n_philo;
+	unsigned int	n_philo;
 	unsigned int	time_to_die;
 	unsigned int	time_to_eat;
 	unsigned int	time_to_sleep;
 	int				n_times_eat;
-	int 			finish;
+	int				finish;
 	long long		start;
 	long long		now_time;
 	pthread_mutex_t	finish_mutex;
-	pthread_mutex_t *forks;
-	pthread_mutex_t print_mutex;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	print_mutex;
 	pthread_t		monitor;
 	t_philo			*philo;
 }	t_data;
 
-int	ft_error(char *str);
-int	ft_strlen(char *str);
-int	input_valid(int argc, char **argv, t_data *data);
-int init_philo(t_data *data);
-int init_data(int argc, char **argv, t_data *data);
-unsigned int ft_atoil(char *str);
+int				ft_error(char *str);
+int				ft_strlen(char *str);
+int				input_valid(int argc, char **argv, t_data *data);
+int				init_philo(t_data *data);
+int				init_data(int argc, char **argv, t_data *data);
+int				check_time(t_data *data, int i);
+int				look_finish(t_data *data);
+int				philo_forks(t_philo *philo);
+unsigned int	ft_atoil(char *str);
 unsigned long	get_current_time_ms(void);
-void	*philo_routine(void *arg);
-void	*admin_routine(void *arg);
-void	wait_finish(t_data *data);
-void	ft_finish(t_data *data);
-void    philo_forks(t_philo *philo);
-void    philo_eat(t_philo *philo);
-void    philo_think(t_philo *philo);
-void    philo_sleep(t_philo *philo);
-void	print_msg(char *msg, t_philo *philo, t_data *data);
+unsigned long	print_time(t_data *data);
+void			*philo_routine(void *arg);
+void			*admin_routine(void *arg);
+void			wait_finish(t_data *data);
+void			ft_finish(t_data *data);
+void			philo_eat(t_philo *philo);
+void			philo_think(t_philo *philo);
+void			philo_sleep(t_philo *philo);
+void			print_msg(char *msg, t_philo *philo, t_data *data);
 
 #endif

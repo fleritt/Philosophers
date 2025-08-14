@@ -6,20 +6,20 @@
 #    By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/19 11:52:48 by rfleritt          #+#    #+#              #
-#    Updated: 2025/08/12 12:15:53 by rfleritt         ###   ########.fr        #
+#    Updated: 2025/08/14 15:16:57 by rfleritt         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
 
 CC = cc
-CFLAGS = -Wall -Werror -Wextra -g3
+CFLAGS = -Wall -Werror -Wextra -g3 -fsanitize=thread
 
 LDFLAGS = -lpthread
 RM = rm -f
 
 SRC = ./src/main.c ./src/utils.c ./src/parse.c ./src/init.c ./src/philo_routine.c \
-	./src/print.c
+	./src/print.c ./src/monitor.c
 OBJ = $(SRC:.c=.o)
 
 all: ${NAME}
