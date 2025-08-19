@@ -5,12 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/19 12:03:33 by rfleritt          #+#    #+#             */
-/*   Updated: 2025/08/18 12:09:07 by rfleritt         ###   ########.fr       */
+/*   Created: 2025/08/18 11:53:46 by rfleritt          #+#    #+#             */
+/*   Updated: 2025/08/18 13:07:58 by rfleritt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/philo.h"
+#include "../include/philo_bonus.h"
 
 int	valid_int(char *str)
 {
@@ -35,7 +35,7 @@ int	valid_int(char *str)
 	return (TRUE);
 }
 
-int	input_valid(int argc, char **argv, t_data *data)
+void	input_valid(int argc, char **argv, t_data *data)
 {
 	int	i;
 
@@ -43,7 +43,7 @@ int	input_valid(int argc, char **argv, t_data *data)
 	while (argv[i])
 	{
 		if (valid_int(argv[i]))
-			return (FALSE);
+			ft_error("Invalid Input");
 		i++;
 	}
 	data->n_philo = ft_atoil(argv[1]);
@@ -54,9 +54,8 @@ int	input_valid(int argc, char **argv, t_data *data)
 	if (argc == 6)
 		data->n_times_eat = ft_atoil(argv[5]);
 	if (data->n_philo > PHILO_MAX)
-		return (ft_error("ERROR: The maximum philo is 200"));
+		ft_error("ERROR: The maximum philo is 200");
 	if (data->n_philo <= 0 || data->n_times_eat == 0 || data->time_to_die <= 0
 		||data->time_to_eat <= 0 || data->time_to_sleep <= 0)
-		return (FALSE);
-	return (TRUE);
+		ft_error("Invalid Input");
 }

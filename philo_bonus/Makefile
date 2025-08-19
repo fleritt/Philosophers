@@ -5,12 +5,12 @@
 #                                                     +:+ +:+         +:+      #
 #    By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/07/19 11:52:48 by rfleritt          #+#    #+#              #
-#    Updated: 2025/08/18 11:31:29 by rfleritt         ###   ########.fr        #
+#    Created: 2025/08/18 11:33:26 by rfleritt          #+#    #+#              #
+#    Updated: 2025/08/19 15:57:12 by rfleritt         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = philo
+NAME = philo_bonus
 
 CC = cc
 CFLAGS = -Wall -Werror -Wextra -g3 -fsanitize=thread
@@ -18,8 +18,8 @@ CFLAGS = -Wall -Werror -Wextra -g3 -fsanitize=thread
 LDFLAGS = -lpthread
 RM = rm -f
 
-SRC = ./src/main.c ./src/utils.c ./src/parse.c ./src/init.c ./src/philo_routine.c \
-	./src/print.c ./src/monitor.c
+SRC = ./src/main.c ./src/parse.c ./src/init.c ./src/utils.c ./src/print.c \
+	./src/philo_routine.c
 OBJ = $(SRC:.c=.o)
 
 all: ${NAME}

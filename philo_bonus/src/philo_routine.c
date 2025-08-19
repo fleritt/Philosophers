@@ -5,35 +5,36 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/11 13:06:10 by rfleritt          #+#    #+#             */
-/*   Updated: 2025/08/18 11:30:02 by rfleritt         ###   ########.fr       */
+/*   Created: 2025/08/18 15:19:18 by rfleritt          #+#    #+#             */
+/*   Updated: 2025/08/19 14:02:28 by rfleritt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/philo.h"
+#include "../include/philo_bonus.h"
 
 int	philo_forks(t_philo *philo)
 {
+	if (philo->data->n_philo == 1)
+	{
+        sem_wait(philo->data->forks);
+		print_msg(TAKE_FORKS, philo, philo->data);
+        sem_post(philo->data->forks);
+		usleep(philo->data->time_to_eat * MSEC_TO_USEC);
+		exit(EXIT_FAILURE);
+	}
 	if (philo->id % 2 == 0)
 	{
-		pthread_mutex_lock(philo->right_fork);
+    	sem_wait(philo->data->forks);
 		print_msg(TAKE_FORKS, philo, philo->data);
-		pthread_mutex_lock(philo->left_fork);
+    	sem_wait(philo->data->forks);
 		print_msg(TAKE_FORKS, philo, philo->data);
-	}
-	else if (philo->data->n_philo == 1)
-	{
-		pthread_mutex_lock(philo->right_fork);
-		print_msg(TAKE_FORKS, philo, philo->data);
-		pthread_mutex_unlock(philo->right_fork);
-		usleep(philo->data->time_to_eat * MSEC_TO_USEC);
-		return (FALSE);
 	}
 	else
 	{
-		pthread_mutex_lock(philo->left_fork);
+		usleep(500);
+		sem_wait(philo->data->forks);
 		print_msg(TAKE_FORKS, philo, philo->data);
-		pthread_mutex_lock(philo->right_fork);
+    	sem_wait(philo->data->forks);
 		print_msg(TAKE_FORKS, philo, philo->data);
 	}
 	return (TRUE);
@@ -41,14 +42,14 @@ int	philo_forks(t_philo *philo)
 
 void	philo_eat(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->data->meal_mutex);
+    sem_wait(philo->data->death_sem);
 	philo->last_time = get_current_time_ms();
-	pthread_mutex_unlock(&philo->data->meal_mutex);
+    sem_post(philo->data->death_sem);
 	print_msg(EAT, philo, philo->data);
 	philo->n_eaten++;
 	usleep(philo->data->time_to_eat * MSEC_TO_USEC);
-	pthread_mutex_unlock(philo->right_fork);
-	pthread_mutex_unlock(philo->left_fork);
+    sem_post(philo->data->forks);
+    sem_post(philo->data->forks);
 }
 
 void	philo_think(t_philo *philo)

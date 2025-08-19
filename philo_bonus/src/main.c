@@ -5,25 +5,24 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/19 12:02:15 by rfleritt          #+#    #+#             */
-/*   Updated: 2025/08/18 15:15:12 by rfleritt         ###   ########.fr       */
+/*   Created: 2025/08/18 11:50:12 by rfleritt          #+#    #+#             */
+/*   Updated: 2025/08/19 15:53:33 by rfleritt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/philo.h"
+#include "../include/philo_bonus.h"
 
 void	wait_finish(t_data *data)
 {
 	int	i;
 
 	i = 0;
-	if (data->monitor)
-		pthread_join(data->monitor, NULL);
 	if (data->philo)
 	{
+		sem_wait(data->stop);
 		while (i < (int)data->n_philo)
 		{
-			pthread_join(data->philo[i].thread, NULL);
+			kill(data->philo->pid, SIGKILL);
 			i++;
 		}
 	}
@@ -33,85 +32,72 @@ void	wait_finish(t_data *data)
 
 void	ft_finish(t_data *data)
 {
-	int	i;
-
-	i = 0;
-	pthread_mutex_destroy(&data->finish_mutex);
-	pthread_mutex_destroy(&data->print_mutex);
-	while (i < (int)data->n_philo)
-	{
-		pthread_mutex_destroy(&data->forks[i]);
-		i++;
-	}
-	if (data->forks)
-		free(data->forks);
+		sem_close(data->forks);
+		sem_unlink("/forks");
+		sem_close(data->print_sem);
+		sem_unlink("/print");
+		sem_close(data->death_sem);
+		sem_unlink("/death");
+		sem_close(data->stop);
+		sem_unlink("/stop");
 	if (data->philo)
 		free(data->philo);
 }
 
 void	*monitor_routine(void *arg)
 {
-	t_data	*data;
 	int		i;
-
-	data = (t_data *)arg;
-	i = -1;
-	while (data->n_times_eat == -1 || ++i < data->n_times_eat)
-	{
-		i = 0;
-		while (i < (int)data->n_philo)
-		{
-			if (look_finish(data))
-			{
-				printf("%lu %d %s\n", print_time(data), data->philo[i].id, DIED);
-				return (NULL);
-			}
-			if (check_time(data, i))
-				return (NULL);
-		}
-	}
-	return (NULL);
-}
-
-void	*philo_routine(void *arg)
-{
 	t_philo	*philo;
-	int		i;
 
-	philo = (t_philo *)arg;
 	i = -1;
+	philo = (t_philo *)arg;
 	while (philo->data->n_times_eat == -1 || ++i < philo->data->n_times_eat)
 	{
-		if (look_finish(philo->data))
-			return (NULL);
+		if (check_time(philo))
+		{
+			sem_wait(philo->data->print_sem);
+			printf("%lu %d %s\n", print_time(philo->data), philo->id, DIED);
+			sem_post(philo->data->stop);
+			break ;
+		}
+	}
+	exit(EXIT_FAILURE);
+}
+
+void	philo_routine(t_philo *philo)
+{
+	int i;
+	
+	i = -1;
+	pthread_create(&philo->monitor, NULL,
+		monitor_routine, philo);
+	while (philo->data->n_times_eat == -1 || ++i < philo->data->n_times_eat)
+	{
 		if (philo_forks(philo))
-			return (NULL);
+			exit(EXIT_FAILURE);
 		philo_eat(philo);
 		philo_sleep(philo);
 		philo_think(philo);
 	}
-	return (NULL);
+	exit(EXIT_FAILURE);
 }
 
 int	main(int argc, char **argv)
 {
-	t_data	data;
-	int		i;
-
+    t_data	data;
+	int 	i;
+    
 	i = 0;
-	if (argc < 5 || argc > 6)
-	{
-		return (ft_error("ERROR: "));
-	}
-	if (init_data(argc, argv, &data))
-		return (ft_error("ERROR: Invalid Input"));
+    if (argc < 5 || argc > 6)
+        ft_error("ERROR: ");
+    init_data(argc, argv, &data);
 	while (i < (int)data.n_philo)
 	{
-		pthread_create(&data.philo[i].thread, NULL,
-			philo_routine, &data.philo[i]);
+		data.philo[i].pid = fork();
+		if (data.philo[i].pid == 0)
+			philo_routine(&data.philo[i]);
 		i++;
 	}
-	pthread_create(&data.monitor, NULL, monitor_routine, &data);
 	wait_finish(&data);
 	ft_finish(&data);
 	return (0);

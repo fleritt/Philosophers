@@ -1,25 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.h                                            :+:      :+:    :+:   */
+/*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/19 11:56:51 by rfleritt          #+#    #+#             */
-/*   Updated: 2025/08/18 13:01:35 by rfleritt         ###   ########.fr       */
+/*   Created: 2025/08/18 11:34:50 by rfleritt          #+#    #+#             */
+/*   Updated: 2025/08/19 15:52:45 by rfleritt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILO_H
-# define PHILO_H
+#ifndef PHILO_BONUS_H
+# define PHILO_BONUS_H
 
+# include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include <stdio.h>
+# include <semaphore.h>
 # include <sys/time.h>
+# include <sys/wait.h>
 # include <limits.h>
-# include <pthread.h>
 # include <string.h>
+# include <fcntl.h>
+# include <signal.h>
+# include <pthread.h>
 
 # define FALSE 1
 # define TRUE 0
@@ -39,13 +43,12 @@
 
 typedef struct s_philo
 {
-	struct s_data	*data;	
+	struct s_data	*data;
 	int				id;
 	int				n_eaten;
 	long long		last_time;
-	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*right_fork;
-	pthread_t		thread;
+	pthread_t		monitor;
+	pid_t			pid;
 }	t_philo;
 
 typedef struct s_data
@@ -55,34 +58,32 @@ typedef struct s_data
 	unsigned int	time_to_eat;
 	unsigned int	time_to_sleep;
 	int				n_times_eat;
-	int				finish;
 	long long		start;
-	pthread_mutex_t	finish_mutex;
-	pthread_mutex_t	*forks;
-	pthread_mutex_t	print_mutex;
-	pthread_mutex_t	meal_mutex;
-	pthread_t		monitor;
+	sem_t			*forks;
+	sem_t			*print_sem;
+	sem_t			*death_sem;
+	sem_t			*stop;
 	t_philo			*philo;
-}	t_data;
+}   t_data;
 
-int				ft_error(char *str);
-int				ft_strlen(char *str);
-int				input_valid(int argc, char **argv, t_data *data);
-int				init_philo(t_data *data);
-int				init_data(int argc, char **argv, t_data *data);
-int				check_time(t_data *data, int i);
-int				look_finish(t_data *data);
-int				philo_forks(t_philo *philo);
-unsigned int	ft_atoil(char *str);
 unsigned long	get_current_time_ms(void);
 unsigned long	print_time(t_data *data);
-void			*philo_routine(void *arg);
-void			*admin_routine(void *arg);
-void			wait_finish(t_data *data);
-void			ft_finish(t_data *data);
+unsigned int	ft_atoil(char *str);
+int				ft_strlen(char *str);
+int				valid_int(char *str);
+int				init_philo(t_data *data);
+int				philo_forks(t_philo *philo);
+int				check_time(t_philo *philo);
 void			philo_eat(t_philo *philo);
 void			philo_think(t_philo *philo);
 void			philo_sleep(t_philo *philo);
+void    		init_data(int argc, char **argv, t_data *data);
+void			ft_error(char *str);
+void			input_valid(int argc, char **argv, t_data *data);
+void			philo_routine(t_philo *philo);
+void			*monitor_routine(void *arg);
+void			wait_finish(t_data *data);
+void			ft_finish(t_data *data);
 void			print_msg(char *msg, t_philo *philo, t_data *data);
 
 #endif

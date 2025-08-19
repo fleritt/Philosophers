@@ -6,7 +6,7 @@
 /*   By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 12:19:08 by rfleritt          #+#    #+#             */
-/*   Updated: 2025/08/14 15:45:13 by rfleritt         ###   ########.fr       */
+/*   Updated: 2025/08/18 11:19:39 by rfleritt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,16 @@ int	look_finish(t_data *data)
 int	check_time(t_data *data, int i)
 {
 	pthread_mutex_lock(&data->finish_mutex);
+	pthread_mutex_lock(&data->meal_mutex);
 	if (get_current_time_ms() - data->philo[i].last_time > data->time_to_die)
 	{
+		pthread_mutex_unlock(&data->meal_mutex);
 		data->finish = 0;
 		pthread_mutex_unlock(&data->finish_mutex);
 		printf("%lu %d %s\n", print_time(data), data->philo[i].id, DIED);
-		return (TRUE);
+		return (FALSE);
 	}
 	pthread_mutex_unlock(&data->finish_mutex);
-	return (FALSE);
+	pthread_mutex_unlock(&data->meal_mutex);
+	return (TRUE);
 }
