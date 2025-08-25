@@ -6,7 +6,7 @@
 /*   By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 13:06:10 by rfleritt          #+#    #+#             */
-/*   Updated: 2025/08/18 11:30:02 by rfleritt         ###   ########.fr       */
+/*   Updated: 2025/08/25 09:57:45 by rfleritt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,9 @@ void	philo_eat(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->data->meal_mutex);
 	philo->last_time = get_current_time_ms();
+	philo->n_eaten++;
 	pthread_mutex_unlock(&philo->data->meal_mutex);
 	print_msg(EAT, philo, philo->data);
-	philo->n_eaten++;
 	usleep(philo->data->time_to_eat * MSEC_TO_USEC);
 	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_unlock(philo->left_fork);

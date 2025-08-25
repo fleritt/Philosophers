@@ -6,14 +6,14 @@
 #    By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/18 11:33:26 by rfleritt          #+#    #+#              #
-#    Updated: 2025/08/19 15:57:12 by rfleritt         ###   ########.fr        #
+#    Updated: 2025/08/25 10:46:34 by rfleritt         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo_bonus
 
 CC = cc
-CFLAGS = -Wall -Werror -Wextra -g3 -fsanitize=thread
+CFLAGS = -Wall -Werror -Wextra -g3
 
 LDFLAGS = -lpthread
 RM = rm -f

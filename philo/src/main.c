@@ -6,7 +6,7 @@
 /*   By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:02:15 by rfleritt          #+#    #+#             */
-/*   Updated: 2025/08/18 15:15:12 by rfleritt         ###   ########.fr       */
+/*   Updated: 2025/08/25 09:58:55 by rfleritt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,6 @@ void	wait_finish(t_data *data)
 			i++;
 		}
 	}
-	if (data->n_times_eat > -1)
-		printf("%lu %s\n", print_time(data), ALL_EATS);
 }
 
 void	ft_finish(t_data *data)
@@ -53,21 +51,26 @@ void	*monitor_routine(void *arg)
 {
 	t_data	*data;
 	int		i;
+	int		j;
 
 	data = (t_data *)arg;
-	i = -1;
-	while (data->n_times_eat == -1 || ++i < data->n_times_eat)
+	j = -1;
+	while (1)
 	{
 		i = 0;
 		while (i < (int)data->n_philo)
 		{
 			if (look_finish(data))
 			{
-				printf("%lu %d %s\n", print_time(data), data->philo[i].id, DIED);
+				pthread_mutex_lock(&data->meal_mutex);
+				if (data->philo[i].n_eaten != data->n_times_eat)
+					printf("%lu %d %s\n", print_time(data), data->philo[i].id, DIED);
+				pthread_mutex_unlock(&data->meal_mutex);
 				return (NULL);
 			}
 			if (check_time(data, i))
 				return (NULL);
+			i++;
 		}
 	}
 	return (NULL);
@@ -79,8 +82,8 @@ void	*philo_routine(void *arg)
 	int		i;
 
 	philo = (t_philo *)arg;
-	i = -1;
-	while (philo->data->n_times_eat == -1 || ++i < philo->data->n_times_eat)
+	i = 0;
+	while (philo->data->n_times_eat == -1 || i < philo->data->n_times_eat)
 	{
 		if (look_finish(philo->data))
 			return (NULL);
@@ -89,6 +92,7 @@ void	*philo_routine(void *arg)
 		philo_eat(philo);
 		philo_sleep(philo);
 		philo_think(philo);
+		i++;
 	}
 	return (NULL);
 }

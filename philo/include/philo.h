@@ -6,7 +6,7 @@
 /*   By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 11:56:51 by rfleritt          #+#    #+#             */
-/*   Updated: 2025/08/18 13:01:35 by rfleritt         ###   ########.fr       */
+/*   Updated: 2025/08/25 09:48:35 by rfleritt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@
 # define THINK "is thinking"
 # define SLEEP "is sleeping"
 # define DIED "died"
-# define ALL_EATS "all eat enough"
 
 typedef struct s_philo
 {

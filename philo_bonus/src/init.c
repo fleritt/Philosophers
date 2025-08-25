@@ -6,7 +6,7 @@
 /*   By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 12:12:09 by rfleritt          #+#    #+#             */
-/*   Updated: 2025/08/19 15:52:49 by rfleritt         ###   ########.fr       */
+/*   Updated: 2025/08/25 10:29:38 by rfleritt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,10 @@ void	init_data(int argc, char **argv, t_data *data)
 	i = 0;
 	if (!data)
 		ft_error("ERROR: Invalid Input");
+    sem_unlink("/forks");
+    sem_unlink("/print");
+    sem_unlink("/death");
+    sem_unlink("/stop");
 	data->forks = sem_open("/forks", O_CREAT, 0644, data->n_philo);
 	data->print_sem = sem_open("/print", O_CREAT, 0644, 1);
     data->death_sem = sem_open("/death", O_CREAT, 0644, 1);

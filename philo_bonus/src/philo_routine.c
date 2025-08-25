@@ -6,7 +6,7 @@
 /*   By: rfleritt <rfleritt@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 15:19:18 by rfleritt          #+#    #+#             */
-/*   Updated: 2025/08/19 14:02:28 by rfleritt         ###   ########.fr       */
+/*   Updated: 2025/08/25 10:37:06 by rfleritt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,26 +17,17 @@ int	philo_forks(t_philo *philo)
 	if (philo->data->n_philo == 1)
 	{
         sem_wait(philo->data->forks);
-		print_msg(TAKE_FORKS, philo, philo->data);
-        sem_post(philo->data->forks);
-		usleep(philo->data->time_to_eat * MSEC_TO_USEC);
-		exit(EXIT_FAILURE);
+    	print_msg(TAKE_FORKS, philo, philo->data);
+    	usleep(philo->data->time_to_die * MSEC_TO_USEC);
+		printf("%lu %d %s\n", print_time(philo->data), philo->id, DIED);
+    	sem_post(philo->data->stop);
 	}
-	if (philo->id % 2 == 0)
-	{
-    	sem_wait(philo->data->forks);
-		print_msg(TAKE_FORKS, philo, philo->data);
-    	sem_wait(philo->data->forks);
-		print_msg(TAKE_FORKS, philo, philo->data);
-	}
-	else
-	{
-		usleep(500);
-		sem_wait(philo->data->forks);
-		print_msg(TAKE_FORKS, philo, philo->data);
-    	sem_wait(philo->data->forks);
-		print_msg(TAKE_FORKS, philo, philo->data);
-	}
+	else if (philo->id % 2 == 0)
+		usleep(1000);
+	sem_wait(philo->data->forks);
+	print_msg(TAKE_FORKS, philo, philo->data);
+    sem_wait(philo->data->forks);
+	print_msg(TAKE_FORKS, philo, philo->data);
 	return (TRUE);
 }
 
